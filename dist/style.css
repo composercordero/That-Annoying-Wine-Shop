@@ -10,7 +10,21 @@ body{
   font-family: 'Poppins', sans-serif;
 }
 
+.is-visible{
+    display: block;
+}
+
+.is-invisible{
+    display: none;
+}
+
 li.borderless {
     border: 0 none;
-  }
+}
+
+.borderless:hover{
+    color: #737373;
+    background-color: transparent;
+    cursor: pointer;
+}
 

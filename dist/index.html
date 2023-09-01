@@ -3,10 +3,98 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>That Annoying Wine Restaurant</title>
+    <title>That Annoying Wine Shop</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body> 
+<!-- Toggle this with JS -->
+
+<div class="container d-lg-flex align-items-center" style="min-height: 100vh">
+        <!-- LEFT: SIDEBAR -->
+        <div class="col-lg-6 col-12 column-gap-5">
+            <!-- LOGO -->
+            <div class="d-flex justify-content-center">
+                <h1 class="display-1 fw-bolder">That <br>Annoying <br>Wine Shop</h1>
+            </div>
+            <!-- MENU -->
+            <div class="navigation">
+                <nav class="navbar navbar-expand-lg justify-content-around">
+                            <ul class="list-group list-group-horizontal text-center">
+                                <li id="homeBtn" class="list-group-item borderless navBtn">
+                                    <i class="bi bi-house-heart-fill"></i>
+                                    <p>Home</p>
+                                </li>
+                                <li id="aboutBtn" class="list-group-item borderless navBtn">
+                                    <i class="bi bi-balloon-heart-fill"></i>
+                                    <p>About</p>
+                                </li>
+                                <li  id="shopBtn"class="list-group-item borderless navBtn">
+                                    <i class="bi bi-basket-fill"></i>
+                                    <p>Shop</p>
+                                </li>
+                                <li  id="contactBtn"class="list-group-item borderless navBtn">
+                                    <i class="bi bi-envelope-check-fill"></i>
+                                    <p>Contact</p>
+                                </li>
+                                <li  id="modeBtn"class="list-group-item borderless navBtn">
+                                    <i class="bi bi-moon-stars-fill"></i>
+                                    <p>Dark Mode</p></li>
+                              </ul>
+                        </div>
+                  </nav>
+        </div>
+        <!-- RIGHT: CONTENT -->
+        <div class="col-lg-6 col-12">
+            <!-- FORM: 'login the user' -->
+            <div id="home">
+                <form id="login_form">
+                    
+                    <div class="form-group mb-3">
+                      <label for="name" class="form-label">Annoying Name</label>
+                      <input type="text" class="form-control" id="name" aria-describedby="nameHelp" placeholder="What's your name, dear?">
+                      <div id="nameHelp" class="form-text">We promise to annoy you with all the wine in the world.</div>
+                    </div>
+
+                    <div class="mb-3">
+                      <label for="age" class="form-label">Annoying Age</label>
+                      <input type="text" class="form-control" id="age" aria-describedby="ageHelp" placeholder="How old are you?">
+                      <div id="ageHelp" class="form-text">You better be over 21 years old!</div>
+                    </div>
+
+                    <div class="mb-3 form-check">
+                      <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                      <label class="form-check-label" for="exampleCheck1">I am indeed over 21</label>
+                    </div>
+
+                    <button id="loginBtn" type="submit" class="btn btn-primary">Login</button>
+
+                  </form>
+            </div>
+
+            <div id="about">
+                <div class="card" style="width: 18rem;">
+                    <div class="card-body">
+                      <h5 class="card-title">About Section</h5>
+                      <p class="card-text">We discover that we could use our most obnoxious traits to make money and we decided to go for it. Our mission is to annoy you with out-of-this-world (but still made on earth) wine! </p>
+                      <a href="#" class="btn btn-primary">Go somewhere</a>
+                    </div>
+                  </div>
+            </div>
+
+            <div class="logged-in">
+                <!-- ITEMS: Shop area -->
+                <div id="shop"></div>
+                <!-- CART -->
+                <div id="cart"></div>
+            </div>
+        </div>
+
+</div>
     
     <script src="bundle.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>

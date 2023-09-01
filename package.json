@@ -1,0 +1,23 @@
+{
+  "name": "typescript-shopping-cart-page",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "npm run bundle && npm-run-all --parallel watch serve",
+    "watch": "webpack --watch",
+    "serve": "cd dist && live-server",
+    "bundle": "webpack"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "live-server": "^1.2.2",
+    "npm-run-all": "^4.1.5",
+    "ts-loader": "^9.4.4",
+    "typescript": "^5.2.2",
+    "uuid": "^9.0.0",
+    "webpack": "^5.88.2",
+    "webpack-cli": "^5.1.4"
+  }
+}

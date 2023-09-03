@@ -39,8 +39,6 @@ function changeView(section:string):void{
     // section.target.classList.add('active');
 }
 
-
-
 class User{
 
     constructor(
@@ -61,11 +59,11 @@ class User{
 
     // Step 3: Create some methods
 
-    static loginUser(e:Event):User|undefined|null|void{
-        e.preventDefault();
+    static loginUser():User{
         const nameInput:string = (<HTMLInputElement>document.getElementById('name')).value;
         const ageInput:number = parseFloat((<HTMLInputElement>document.getElementById('age')).value);
-        console.log(new User(nameInput, ageInput))
+        let new_user = new User(nameInput, ageInput);
+        return new_user
     }
 
 
@@ -134,54 +132,105 @@ class Item{
     public set price(value: number) { this._price = value; }
     public get description(): string { return this._description; } 
     public set description(value: string) { this._description = value; }
+
+    static itemElement(item:Item):void{
+        let menu = document.getElementById('wine-list')
+        let div:HTMLDivElement = document.createElement('div')
+        div.innerHTML = `<div class="card mb-3">
+        <h6 class="card-header fw-bold">${item.name} ($${item.price})</h6>
+        <div class="card-body">
+          <p class="card-text">${item.description}</p>
+          <a href="#" class="btn btn-warning">Add to Cart</a>
+        </div>
+      </div>`
+        menu?.append(div);
+    };
 }
 
 class Shop{
+    static myUser: User | undefined
+
     constructor(
-        private _items: Item[] = []
-    ){ // Step 3: Create some methods
-        this.items.push(new Item('iPhone',699, 'Cellphone'));
-        this.items.push(new Item('iPad', 799, 'Tablet'));
-        this.items.push(new Item('Macbook Pro', 1599, 'Laptop'));
-        this.items.push(new Item('iMac', 1899, 'Computer'));
+        private _items: Item[] = [],
+        ){
+            this.items.push(new Item('Vino',699, 'We bring it. You buy it. You come back.'));
+            this.items.push(new Item('Vinho', 799, 'This is not our most annoying wine, but it is definitely our best seller for more than one reason.'));
+            this.items.push(new Item('Vinox', 1599, 'Annoyingly delicious, with a great aroma that will keep you coming back for more.'));
+        }
+        
+        public get items(): Item[] {return this._items;}
+        public set items(value: Item[]) {this._items = value;}
+
+    showItems():void{
+        for (let i=0; i<this.items.length; i++){
+            Item.itemElement(thatAnnoyingWineShop.items[i])
+        }
     }
-    
-    public get items(): Item[] { return this._items; }
-    public set items(value: Item[]) { this._items = value; }
+
+    updateCart(user:User):void{
+        let cart = document.getElementById('cart');
+        let li = document.createElement('li');
+        const mySet = new Set(user.cart)
+        const userCart = Array.from(mySet)
+        console.log(userCart)
+        if (user.cart.length === 0){
+            li.innerHTML = `<li class='list-group-item d-flex justify-content-between items'>
+            Nothing here :( Get some wine!
+        </li>`
+        cart?.append(li)
+        }else{
+            for (let i=0; i < mySet.size; i++){
+                li.innerHTML += `<li class='list-group-item d-flex justify-content-between items'>
+                ${userCart[i]['name']}(${user.cart.filter((x) => x == userCart[i]).length})
+                <div>
+                <a class="badge bg-warning rounded-pill">-</a>
+                <a class="badge bg-success rounded-pill">+</a>
+                <a class="badge bg-danger rounded-pill">x</a>
+                </div>
+            </li>`
+            
+            cart?.append(li)}
+        }
+    }
+
+        static loginUser(e:Event):void{
+            e.preventDefault();
+            Shop.myUser = User.loginUser()
+            console.log(Shop.myUser)
+        }
+
+
+    // showItems():void{
+    //     let menu = document.getElementById('wine-list')
+    //     let li:HTMLElement = document.createElement('li')
+    //     li.innerHTML = `<li class='list-group-item d-flex justify-content-between'>
+    //     A list item
+    //     <div>
+    //       <a class="badge bg-warning rounded-pill">-</a>
+    //       <a class="badge bg-success rounded-pill">+</a>
+    //       <a class="badge bg-danger rounded-pill">x</a>
+    //     </div>
+    //     </li>'`
+    //     menu?.append(li);
+    // };
+
+    // Item.showItems()
+// }
 
 }
 
-// Step 4: Create Driver Code to emulate a front end user
-
-
 const form:HTMLElement|null = document.getElementById('login_form');
-
-form!.addEventListener('submit', User.loginUser);
-
-const thatAnnoyingWineShop = new Shop()
-
+form!.addEventListener('submit', Shop.loginUser);
+const thatAnnoyingWineShop = new Shop();
+thatAnnoyingWineShop.showItems();
 const carlos = new User('Carlos',31)
-const kristina = new User('Kristina',36)
-console.log('-----------------------')
-console.log(thatAnnoyingWineShop.items)
-console.log('-----------------------')
+
+
+carlos.addToCart(thatAnnoyingWineShop.items[0])
+carlos.addToCart(thatAnnoyingWineShop.items[0])
+carlos.addToCart(thatAnnoyingWineShop.items[0])
 carlos.addToCart(thatAnnoyingWineShop.items[1])
 carlos.addToCart(thatAnnoyingWineShop.items[2])
-carlos.addToCart(thatAnnoyingWineShop.items[3])
-carlos.printCart()
-console.log('-----------------------')
-kristina.addToCart(thatAnnoyingWineShop.items[2])
-kristina.addToCart(thatAnnoyingWineShop.items[3])
-kristina.addToCart(thatAnnoyingWineShop.items[3])
-kristina.addToCart(thatAnnoyingWineShop.items[3])
-kristina.printCart()
-console.log('-----------------------')
-kristina.removeFromCart(thatAnnoyingWineShop.items[2])
-kristina.printCart()
-console.log('-----------------------')
-kristina.removeQuantityFromCart(thatAnnoyingWineShop.items[3],2)
-kristina.printCart()
-console.log('-----------------------')
-console.log('-----------------------')
-kristina.cartTotal()
-console.log('-----------------------')
+console.log(carlos.cart)
+
+thatAnnoyingWineShop.updateCart(carlos);

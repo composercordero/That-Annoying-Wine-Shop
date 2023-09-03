@@ -15,12 +15,12 @@
         <!-- LEFT: SIDEBAR -->
         <div class="col-lg-6 col-12 column-gap-5">
             <!-- LOGO -->
-            <div class="d-flex justify-content-center">
+            <div>
                 <h1 class="display-1 fw-bolder">That <br>Annoying <br>Wine Shop</h1>
             </div>
             <!-- MENU -->
             <div class="navigation">
-                <nav class="navbar navbar-expand-lg justify-content-around">
+                <nav class="navbar navbar-expand-lg">
                             <ul class="list-group list-group-horizontal text-center">
                                 <li id="homeBtn" class="list-group-item borderless navBtn">
                                     <i class="bi bi-house-heart-fill"></i>
@@ -84,12 +84,41 @@
                   </div>
             </div>
 
-            <div class="logged-in">
+            <div id="shop" class="is-invisible">
                 <!-- ITEMS: Shop area -->
-                <div id="shop"></div>
-                <!-- CART -->
-                <div id="cart"></div>
+                <div id="items">
+                    <h1>Take them all!</h1>
+
+                    <div id="wine-list"></div>
+
+                    <a class="btn btn-success mx-3 px-4" data-bs-toggle="offcanvas" href="#offcanvasExample" role="button" aria-controls="offcanvasExample">View Cart</a>
+
+                    <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+                    <div class="offcanvas-header">
+                        <h5 class="offcanvas-title fw-bolder" id="offcanvasExampleLabel">Your Annoying Cart</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                    </div>
+                    <div class="offcanvas-body">
+                        <p>Look what you are getting for yourself!</p>
+                        <div>
+                            <ul id="cart" class="list-group list-group-flush"></ul>
+                        </div>
+                    </div>
+                    </div>
+
+                </div>
             </div>
+
+            <div id="contact" class="is-invisible">
+                <div class="card" style="width: 18rem;">
+                    <div class="card-body">
+                      <h5 class="card-title">Contact Section</h5>
+                      <p class="card-text">We discover that we could use our most obnoxious traits to make money and we decided to go for it. Our mission is to annoy you with out-of-this-world (but still made on earth) wine! </p>
+                      <a href="#" class="btn btn-primary">Go somewhere</a>
+                    </div>
+                  </div>
+            </div>
+
         </div>
 
 </div>

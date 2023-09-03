@@ -28,3 +28,10 @@ li.borderless {
     cursor: pointer;
 }
 
+.items a{
+    text-decoration: none;
+}
+
+#wine-list, #cart{
+    list-style-type: none;
+}

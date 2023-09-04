@@ -32,6 +32,11 @@ li.borderless {
     text-decoration: none;
 }
 
+#wine-list {
+    height: 40vh;
+    overflow-y: scroll;
+}
+
 #wine-list, #cart{
     list-style-type: none;
 }

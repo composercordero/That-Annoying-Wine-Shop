@@ -92,17 +92,11 @@ class User{
 
     cartTotal():void{
         let cartTotal = 0;
+        const total = document.getElementById('total')
         for (let item of this.cart){
             cartTotal += item.price
         }
-        console.log(cartTotal)
-    }
-    
-    printCart():void{
-        console.log(`${this.name}'s cart:`)
-        for (let item of this.cart){
-            console.log(`${item.name} - ${item.price}`)
-        }
+        total!.innerText += cartTotal.toString()
     }
 
     changeMode():void{
@@ -153,9 +147,16 @@ class Shop{
     constructor(
         private _items: Item[] = [],
         ){
-            this.items.push(new Item('Vino',699, 'We bring it. You buy it. You come back.'));
-            this.items.push(new Item('Vinho', 799, 'This is not our most annoying wine, but it is definitely our best seller for more than one reason.'));
-            this.items.push(new Item('Vinox', 1599, 'Annoyingly delicious, with a great aroma that will keep you coming back for more.'));
+            this.items.push(new Item('Vin', 299, 'It\s French and delicious. Not that annoying, so cheaper.'));
+            this.items.push(new Item('Víno', 399, 'A great selection for those who want to delve into this annoying world.'));
+            this.items.push(new Item('Vino',699, 'Fancy Spanish wine. We bring it. You buy it. You come back.'));
+            this.items.push(new Item('Vinho', 799, 'This is not our most annoying wine, but it is definitely our best seller for more than one reason, one of them because it is from Brazil.'));
+            this.items.push(new Item('Vinum', 1599, 'Annoyingly delicious, with a great aroma that will keep you coming back for more.'));
+            this.items.push(new Item('Vi', 2599, 'Our top shelve. Vi will annoy the hell out of you.'));
+
+            this.showItems();
+            this.updateCart(Shop.myUser!)
+            Shop.myUser!.cartTotal()
         }
         
         public get items(): Item[] {return this._items;}
@@ -163,7 +164,7 @@ class Shop{
 
     showItems():void{
         for (let i=0; i<this.items.length; i++){
-            Item.itemElement(thatAnnoyingWineShop.items[i])
+            Item.itemElement(this.items[i])
         }
     }
 
@@ -172,7 +173,6 @@ class Shop{
         let li = document.createElement('li');
         const mySet = new Set(user.cart)
         const userCart = Array.from(mySet)
-        console.log(userCart)
         if (user.cart.length === 0){
             li.innerHTML = `<li class='list-group-item d-flex justify-content-between items'>
             Nothing here :( Get some wine!
@@ -196,9 +196,12 @@ class Shop{
         static loginUser(e:Event):void{
             e.preventDefault();
             Shop.myUser = User.loginUser()
+            if(Shop.myUser){
+                new Shop();
+                changeView('shop')
+            }
             console.log(Shop.myUser)
         }
-
 
     // showItems():void{
     //     let menu = document.getElementById('wine-list')
@@ -221,16 +224,15 @@ class Shop{
 
 const form:HTMLElement|null = document.getElementById('login_form');
 form!.addEventListener('submit', Shop.loginUser);
-const thatAnnoyingWineShop = new Shop();
-thatAnnoyingWineShop.showItems();
+
 const carlos = new User('Carlos',31)
 
 
-carlos.addToCart(thatAnnoyingWineShop.items[0])
-carlos.addToCart(thatAnnoyingWineShop.items[0])
-carlos.addToCart(thatAnnoyingWineShop.items[0])
-carlos.addToCart(thatAnnoyingWineShop.items[1])
-carlos.addToCart(thatAnnoyingWineShop.items[2])
+// carlos.addToCart(thatAnnoyingWineShop.items[0])
+// carlos.addToCart(thatAnnoyingWineShop.items[0])
+// carlos.addToCart(thatAnnoyingWineShop.items[0])
+// carlos.addToCart(thatAnnoyingWineShop.items[1])
+// carlos.addToCart(thatAnnoyingWineShop.items[2])
 console.log(carlos.cart)
 
-thatAnnoyingWineShop.updateCart(carlos);
+// thatAnnoyingWineShop.updateCart(carlos);

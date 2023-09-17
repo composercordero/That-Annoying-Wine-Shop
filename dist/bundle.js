@@ -271,61 +271,77 @@ class User {
     }
     cartHTMLElement() {
         let cart = document.getElementById('cart');
+        const outer = document.createElement('div');
         let li = document.createElement('li');
-        li.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'items');
-        const mySet = new Set(Shop.myUser.cart);
-        const userCart = Array.from(mySet);
-        for (let i = 0; i < mySet.size; i++) {
-            let selectedItem = Shop.myUser.cart.filter(x => { return x.id === userCart[i]['id']; });
-            li.innerHTML = `${userCart[i]['name']}(${Shop.myUser.cart.filter((x) => x == userCart[i]).length})
-        <div>
-        <button id="removeItem" class="btn bg-warning rounded-pill" onclick="Shop.myUser!.removeQuantityFromCart('${selectedItem[i]['id']})">-</button>
-        <button id="addItem" class="btn bg-success rounded-pill" onclick="Shop.myUser!.addToCart(${selectedItem})">+</button>
-        <button id="deleteItem" class="btn bg-danger rounded-pill" href="#" onclick='Shop.myUser!.removeFromCart('${selectedItem[i]['id']}')">x</a>
+        li.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'items', 'row');
+        console.log(this.cart);
+        for (const item of new Set(this.cart)) {
+            console.log(Shop.myUser.cart);
+            const rmButton = document.createElement("button");
+            rmButton.innerText = "- 1";
+            rmButton.id = `${item.id}-rm1`;
+            rmButton.classList.add("btn", "btn-danger");
+            rmButton.onclick = () => {
+                Shop.myUser.removeQuantityFromCart(item, 1);
+            };
+            const rmAllButton = document.createElement("button");
+            rmAllButton.innerText = "x";
+            rmAllButton.id = `${item.id}-rmall`;
+            rmAllButton.classList.add("btn", "btn-dark-red", "btn-danger");
+            rmAllButton.onclick = () => {
+                Shop.myUser.removeFromCart(item);
+            };
+            li.innerHTML += `
+        <div class='d-flex justify-content-between my-4'>
+            <div>${item.name} - $${item.price} 
+                / qty: ${this.cart.filter((i) => i.id === item.id).length}
+            </div>
+            <div>
+                ${rmAllButton.outerHTML}
+                ${rmButton.outerHTML}
+            </div>
+        
         </div>`;
-            cart === null || cart === void 0 ? void 0 : cart.append(li);
-            // const removeItem = document.getElementById('removeItem')
-            // removeItem!.addEventListener('click', this.removeQuantityFromCart)
+            outer.append(li);
+            cart === null || cart === void 0 ? void 0 : cart.append(outer);
         }
+        Shop.myUser.cartTotal();
+        return outer;
     }
-    addRemoveEventListeners(item, action) {
-        switch (action) {
-            case 'remove':
-                // const removeBtn = document.getElementById('removeItem');
-                // removeBtn!.onclick = () => {this.removeQuantityFromCart(item)};]
-                console.log(item);
-                break;
-            case 'add':
-                // const addBtn = document.getElementById('addItem');
-                // addBtn!.onclick = () => {this.addToCart('pizza')};
-                console.log(item);
-                break;
-            case 'delete':
-                // const deleteBtn = document.getElementById('deleteItem');
-                // deleteBtn!.onclick = () => {this.removeFromCart()};
-                console.log('delete');
-                break;
+    addRemoveListeners() {
+        for (const item of new Set(this.cart)) {
+            const removeOneButton = document.getElementById(`${item.id}-rm1`) || null;
+            if (removeOneButton) {
+                removeOneButton.onclick = () => {
+                    var _a;
+                    (_a = Shop.myUser) === null || _a === void 0 ? void 0 : _a.removeQuantityFromCart(item, 1);
+                };
+            }
+            const removeAllButton = document.getElementById(`${item.id}-rmall`) || null;
+            if (removeAllButton) {
+                removeAllButton.onclick = () => {
+                    var _a;
+                    (_a = Shop.myUser) === null || _a === void 0 ? void 0 : _a.removeFromCart(item);
+                };
+            }
         }
     }
     addToCart(item) {
-        Shop.myUser.cart.push(item);
-        Shop.updateCart(Shop.myUser);
+        this.cart.push(item);
+        Shop.updateCart();
     }
     removeFromCart(item) {
-        console.log('remove', item);
-        // let selectedItem = Shop.myUser!.cart.filter(x => {
-        //     return x.id === item})
-        // const indexOfItem = Shop.myUser!.cart.indexOf()
-        // if (indexOfItem > -1) {
-        //     this.cart.splice(indexOfItem, 1); 
-        //   }
+        this.cart = this.cart.filter((i) => i.id !== item.id);
+        Shop.updateCart();
     }
-    removeQuantityFromCart(item) {
+    removeQuantityFromCart(item, qty) {
         console.log('remove', item);
-        // let selectedItem = Shop.myUser!.cart.filter(x => {
-        //     return x.id === item})
-        // Shop.myUser!.cart.splice(selectedItem,1)
-        // Shop.updateCart(Shop.myUser!);
+        let i = 0;
+        while (i < qty) {
+            this.cart.splice(this.cart.findIndex((i) => i.id == item.id), 1);
+            i++;
+        }
+        Shop.updateCart();
     }
     cartTotal() {
         let cartTotal = 0;
@@ -333,7 +349,7 @@ class User {
         for (let item of this.cart) {
             cartTotal += item.price;
         }
-        total.innerText += cartTotal.toString();
+        total.innerText = `Your total is ${cartTotal.toString()}`;
     }
     changeMode() {
         if (document.body.dataset.bsTheme) {
@@ -359,19 +375,19 @@ class Item {
     set price(value) { this._price = value; }
     get description() { return this._description; }
     set description(value) { this._description = value; }
-    static itemElement(item) {
-        let menu = document.getElementById('wine-list');
+    itemElement() {
+        // let menu = document.getElementById('wine-list')
         let itemDiv = document.createElement('div');
         itemDiv.innerHTML = `<div class="card mb-3">
-            <h6 class="card-header fw-bold">${item.name} ($${item.price})</h6>
+            <h6 class="card-header fw-bold">${this.name} ($${this.price})</h6>
             <div class="card-body">
-            <p class="card-text">${item.description}</p>
+            <p class="card-text">${this.description}</p>
             <a id="addItem" class="btn btn-warning">Add to Cart</a>
             </div>
             </div>`;
         const addBtn = itemDiv.querySelector('#addItem');
-        addBtn.onclick = () => { Shop.myUser.addToCart(item); };
-        menu === null || menu === void 0 ? void 0 : menu.append(itemDiv);
+        addBtn.onclick = () => { Shop.myUser.addToCart(this); };
+        return itemDiv;
     }
     ;
 }
@@ -385,25 +401,28 @@ class Shop {
         this.items.push(new Item('Vinum', 1599, 'Annoyingly delicious, with a great aroma that will keep you coming back for more.'));
         this.items.push(new Item('Vi', 2599, 'Our top shelve. Vi will annoy the hell out of you.'));
         this.showItems();
-        Shop.updateCart(Shop.myUser);
-        Shop.myUser.cartTotal();
+        Shop.myUser.cart = [];
+        Shop.updateCart();
     }
     get items() { return this._items; }
     set items(value) { this._items = value; }
     showItems() {
-        for (let i = 0; i < this.items.length; i++) {
-            Item.itemElement(this.items[i]);
+        for (let item of this._items) {
+            document.getElementById("wine-list").appendChild(item.itemElement());
         }
     }
-    static updateCart(user) {
+    static updateCart() {
+        var _a;
         let cart = document.getElementById('cart');
-        if (user.cart.length === 0) {
+        if (Shop.myUser.cart.length <= 0) {
             cart.innerHTML = `<p>
             No items in your cart yet :( Get some wine!
         </p>`;
         }
         else {
-            user.cartHTMLElement();
+            cart.replaceChildren(Shop.myUser.cartHTMLElement());
+            cart.innerHTML = ('<H2 id="cart-header">My Cart</H2>' + cart.innerHTML);
+            (_a = Shop.myUser) === null || _a === void 0 ? void 0 : _a.addRemoveListeners();
         }
     }
     static loginUser(e) {
@@ -418,10 +437,6 @@ class Shop {
 }
 const form = document.getElementById('login_form');
 form.addEventListener('submit', Shop.loginUser);
-// const carlos = new User('Carlos',31)
-// carlos.addToCart(new Item('Vin', 299, 'It\s French and delicious. Not that annoying, so cheaper.'))
-// console.log(carlos.cart)
-// thatAnnoyingWineShop.updateCart(carlos);
 
 })();
 

@@ -59,72 +59,87 @@ class User{
         return new_user
     }
 
-    cartHTMLElement():void{
+    cartHTMLElement():HTMLDivElement{
         let cart = document.getElementById('cart');
+        const outer = document.createElement('div')
         let li = document.createElement('li');
-        li.classList.add('list-group-item','d-flex', 'justify-content-between', 'items')
+        li.classList.add('list-group-item','d-flex', 'justify-content-between', 'items', 'row')
+        console.log(this.cart)
         
-        const mySet = new Set(Shop.myUser!.cart)
-        const userCart = Array.from(mySet)
+        for (const item of new Set(this.cart)){
+        console.log(Shop.myUser!.cart)
 
-        for (let i=0; i < mySet.size; i++){
+        const rmButton = document.createElement("button")
+                rmButton.innerText="- 1"
+                rmButton.id=`${item.id}-rm1`
+                rmButton.classList.add("btn", "btn-danger")
+                rmButton.onclick = () => {
+                    Shop.myUser!.removeQuantityFromCart(item,1)
+                    };
+
+        const rmAllButton = document.createElement("button")
+                rmAllButton.innerText="x"
+                rmAllButton.id =`${item.id}-rmall`
+                rmAllButton.classList.add("btn", "btn-dark-red", "btn-danger")
+
+                rmAllButton.onclick=()=>{
+                    Shop.myUser!.removeFromCart(item)
+                }
+
+        li.innerHTML += `
+        <div class='d-flex justify-content-between my-4'>
+            <div>${item.name} - $${item.price} 
+                / qty: ${this.cart.filter((i)=>i.id===item.id).length}
+            </div>
+            <div>
+                ${rmAllButton.outerHTML}
+                ${rmButton.outerHTML}
+            </div>
         
-        let selectedItem = Shop.myUser!.cart.filter(x => {return x.id === userCart[i]['id']})
-
-        li.innerHTML = `${userCart[i]['name']}(${Shop.myUser!.cart.filter((x) => x == userCart[i]).length})
-        <div>
-        <button id="removeItem" class="btn bg-warning rounded-pill" onclick="Shop.myUser!.removeQuantityFromCart('${selectedItem[i]['id']})">-</button>
-        <button id="addItem" class="btn bg-success rounded-pill" onclick="Shop.myUser!.addToCart(${selectedItem})">+</button>
-        <button id="deleteItem" class="btn bg-danger rounded-pill" href="#" onclick='Shop.myUser!.removeFromCart('${selectedItem[i]['id']}')">x</a>
         </div>`
-        cart?.append(li);
-        // const removeItem = document.getElementById('removeItem')
-        // removeItem!.addEventListener('click', this.removeQuantityFromCart)
+        outer.append(li)
+        cart?.append(outer);
+
         }
+        Shop.myUser!.cartTotal()
+        return outer
     }
 
-    addRemoveEventListeners(item:string, action:string):void {
-        switch (action) {
-            case 'remove':
-                // const removeBtn = document.getElementById('removeItem');
-                // removeBtn!.onclick = () => {this.removeQuantityFromCart(item)};]
-                console.log(item)
-                break;
-            case 'add':
-                // const addBtn = document.getElementById('addItem');
-                // addBtn!.onclick = () => {this.addToCart('pizza')};
-                console.log(item)
-                break;
-            case 'delete':
-                // const deleteBtn = document.getElementById('deleteItem');
-                // deleteBtn!.onclick = () => {this.removeFromCart()};
-                console.log('delete')
-                break;
+    addRemoveListeners(){
+        for(const item of new Set(this.cart)){
+            const removeOneButton = document.getElementById(`${item.id}-rm1`) as HTMLButtonElement || null;
+            if (removeOneButton){
+                removeOneButton.onclick = () => {
+                Shop.myUser?.removeQuantityFromCart(item,1)
+                };
+            }
+            const removeAllButton = document.getElementById(`${item.id}-rmall`) as HTMLButtonElement || null;
+            if(removeAllButton){
+                removeAllButton.onclick = () => {
+                Shop.myUser?.removeFromCart(item)
+                };
+            }
         }
     }
 
     addToCart(item:Item):void{
-        Shop.myUser!.cart.push(item)
-        Shop.updateCart(Shop.myUser!);
+        this.cart.push(item)
+        Shop.updateCart();
     }
     
-    removeFromCart(item:string):void{
-        console.log('remove', item)
-        
-        // let selectedItem = Shop.myUser!.cart.filter(x => {
-        //     return x.id === item})
-        // const indexOfItem = Shop.myUser!.cart.indexOf()
-        // if (indexOfItem > -1) {
-        //     this.cart.splice(indexOfItem, 1); 
-        //   }
+    removeFromCart(item:Item):void{
+        this.cart=this.cart.filter((i)=>i.id !== item.id)
+        Shop.updateCart()
     }
     
-    removeQuantityFromCart(item:string):void{
+    removeQuantityFromCart(item:Item, qty:number):void{
         console.log('remove', item)
-        // let selectedItem = Shop.myUser!.cart.filter(x => {
-        //     return x.id === item})
-        // Shop.myUser!.cart.splice(selectedItem,1)
-        // Shop.updateCart(Shop.myUser!);
+        let i = 0
+        while (i<qty){
+            this.cart.splice(this.cart.findIndex((i)=>i.id == item.id),1)
+            i++
+        }
+        Shop.updateCart()
     }
 
     cartTotal():void{
@@ -133,7 +148,7 @@ class User{
         for (let item of this.cart){
             cartTotal += item.price
         }
-        total!.innerText += cartTotal.toString()
+        total!.innerText = `Your total is ${cartTotal.toString()}`
     }
 
     changeMode():void{
@@ -164,20 +179,20 @@ class Item{
     public get description(): string { return this._description; } 
     public set description(value: string) { this._description = value; }
 
-    static itemElement(item:Item):void{
-        let menu = document.getElementById('wine-list')
+    public itemElement():HTMLDivElement{
+        // let menu = document.getElementById('wine-list')
         let itemDiv = document.createElement('div')
         itemDiv.innerHTML = `<div class="card mb-3">
-            <h6 class="card-header fw-bold">${item.name} ($${item.price})</h6>
+            <h6 class="card-header fw-bold">${this.name} ($${this.price})</h6>
             <div class="card-body">
-            <p class="card-text">${item.description}</p>
+            <p class="card-text">${this.description}</p>
             <a id="addItem" class="btn btn-warning">Add to Cart</a>
             </div>
             </div>`;
 
         const addBtn = itemDiv.querySelector('#addItem') as HTMLButtonElement;
-        addBtn.onclick = () => {Shop.myUser!.addToCart(item)}
-        menu?.append(itemDiv);
+        addBtn.onclick = () => {Shop.myUser!.addToCart(this)}
+        return itemDiv
     };
 }
 
@@ -195,8 +210,8 @@ class Shop{
             this.items.push(new Item('Vi', 2599, 'Our top shelve. Vi will annoy the hell out of you.'));
 
             this.showItems();
-            Shop.updateCart(Shop.myUser!)
-            Shop.myUser!.cartTotal()
+            Shop.myUser!.cart = []
+            Shop.updateCart()
     
         }
         
@@ -204,19 +219,21 @@ class Shop{
         public set items(value: Item[]) {this._items = value;}
 
     showItems():void{
-        for (let i=0; i<this.items.length; i++){
-            Item.itemElement(this.items[i])
+        for (let item of this._items){
+            document.getElementById("wine-list")!.appendChild(item.itemElement())
         }
     }
 
-    static updateCart(user:User):void{
+    static updateCart(){
         let cart = document.getElementById('cart');
-        if (user.cart.length === 0){
+        if (Shop.myUser!.cart.length <= 0){
             cart!.innerHTML = `<p>
             No items in your cart yet :( Get some wine!
         </p>`
         }else{
-            user.cartHTMLElement()
+            cart!.replaceChildren(Shop.myUser!.cartHTMLElement())
+            cart!.innerHTML=('<H2 id="cart-header">My Cart</H2>'+cart!.innerHTML)
+            Shop.myUser?.addRemoveListeners()
             }
         }
 
@@ -233,11 +250,3 @@ class Shop{
 
 const form:HTMLElement|null = document.getElementById('login_form');
 form!.addEventListener('submit', Shop.loginUser);
-
-// const carlos = new User('Carlos',31)
-
-
-// carlos.addToCart(new Item('Vin', 299, 'It\s French and delicious. Not that annoying, so cheaper.'))
-// console.log(carlos.cart)
-
-// thatAnnoyingWineShop.updateCart(carlos);
